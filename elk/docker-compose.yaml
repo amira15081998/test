@@ -15,7 +15,15 @@ services:
     - '9300:9300'
     networks:
       - elk
-
+ 
+  Filebeat:
+    user: root
+    image: docker.elastic.co/beats/filebeat-oss:7.8.0
+    container_name: filebeat
+    restart: always
+    networks:
+      - elk
+  
   Logstash:
     image: logstash:7.16.2
     container_name: logstash
@@ -24,7 +32,7 @@ services:
     - ./logstash/:/logstash_dir
     command: logstash -f /logstash_dir/logstash.conf 
     depends_on:
-      - Elasticsearch
+      - Filebeat
     ports:
     - '9600:9600'
     environment:
@@ -32,6 +40,7 @@ services:
     networks:
       - elk
 
+  
   Kibana:
     image: kibana:7.16.2
     container_name: kibana
